@@ -1,0 +1,27 @@
+{
+  "name": "sophos-plastic-table",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sophos-plastic-table.js",
+  "module": "sophos-plastic-table.js",
+  "scripts": {
+    "serve": "es-dev-server --app-index demo/index.html --node-resolve --watch --open",
+    "test": "karma start --coverage",
+    "test:watch": "karma start --auto-watch=true --single-run=false",
+    "test:update-snapshots": "karma start --update-snapshots",
+    "test:prune-snapshots": "karma start --prune-snapshots"
+  },
+  "keywords": [],
+  "author": "armando",
+  "license": "ISC",
+  "dependencies": {
+    "lit-element": "^3.0.2"
+  },
+  "devDependencies": {
+    "@open-wc/testing": "^3.0.3",
+    "@open-wc/testing-karma": "^4.0.9",
+    "deepmerge": "^4.2.2",
+    "es-dev-server": "^2.1.0",
+    "karma": "^6.3.9"
+  }
+}

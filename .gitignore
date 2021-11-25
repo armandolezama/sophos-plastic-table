@@ -1,0 +1,19 @@
+coverage/
+node_modules/
+build/
+*lock.json
+*-log.json
+*-error.json
+yarn.lock
+
+*.d.ts
+*.tgz
+components
+.DS_Store
+.vscode/
+
+# validator
+coverage*
+.idea/
+
+public/
