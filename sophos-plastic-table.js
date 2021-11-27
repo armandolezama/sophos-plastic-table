@@ -1,4 +1,5 @@
 import { LitElement, html } from 'lit-element';
+import { styleMap } from 'lit/directives/style-map.js';
 import styles from './sophos-plastic-table-styles';
 
 export class SophosPlasticTable extends LitElement {
@@ -22,13 +23,16 @@ export class SophosPlasticTable extends LitElement {
           class: 'selected-column'
         },
         {
-          span: '1',
-          class: 'non-selected-column'
+          span: '2',
+          class: 'non-selected-column',
+          style: {
+            backgroundColor: 'gray'
+          }
         }
       ];
       this.columnNames = ['', 'impares', 'pares', 'impares'];
       this.rowNames = ['primera', 'segunda', 'tercera'];
-      this.createCustomCell = () => {};
+      this.builderObject = {};
     };
   
     /**
@@ -42,11 +46,18 @@ export class SophosPlasticTable extends LitElement {
         colGroups : { type : Array },
         columnNames : { type : Array },
         rowNames : { type : Array },
+        builderObject : { type : Object}
       };
     };
 
     static get styles() {
       return styles;
+    };
+
+    set builderObject(value){
+      const oldValue = this._builderObject;
+      this._builderObject = value;
+      this.requestUpdate('builderObject', oldValue);
     };
 
     createTable(){
@@ -79,7 +90,7 @@ export class SophosPlasticTable extends LitElement {
     };
 
     createColGroup(){
-      return this._checkEmptyStructure(this.colGroups, () => html`
+      return this._checkStructure(this.colGroups, () => html`
         <colgroup>
           ${this.colGroups.map(col => this.createColTag(col))}
         </colgroup>
@@ -88,12 +99,16 @@ export class SophosPlasticTable extends LitElement {
 
     createColTag(col){
       return html`
-        <col span="${col.span}" class="${col.class}">
+        <col span="${col.span}" class="${col.class}" style="${styleMap(this.getColTagStyles(col.style))}">
       `;
     };
 
+    getColTagStyles(style){
+      return typeof style === 'object' ? style : {};
+    };
+
     createColumnNames(){
-      return this._checkEmptyStructure(this.columnNames, () => html`
+      return this._checkStructure(this.columnNames, () => html`
         <tr id="column-names">
           ${this.columnNames.map(columnName => html`
               <th class="column-name">
@@ -123,7 +138,7 @@ export class SophosPlasticTable extends LitElement {
     };
 
     createRow(row, rowIndex){
-      let rowTemplate = this._checkEmptyStructure(this.rowNames, () => html`
+      let rowTemplate = this._checkStructure(this.rowNames, () => html`
         <th scope="col" class="row-name">
           ${this.rowNames[rowIndex]}
         </th>
@@ -147,9 +162,13 @@ export class SophosPlasticTable extends LitElement {
         row="${row}" 
         column="${col}"
         @click="${this._cellHasBeenClicked}">
-          ${cell}
+          ${this._buildCell(cell)}
         </td>
       `;
+    };
+
+    _buildCell(cell){
+      return this._builderObject?.builder ? this._builderObject.builder(cell) : cell;
     };
 
     createFooter(){
@@ -160,7 +179,7 @@ export class SophosPlasticTable extends LitElement {
       `;
     }
 
-    _checkEmptyStructure(structure, callback){
+    _checkStructure(structure, callback){
       return structure.length === 0 ? html`` : html`
         ${callback()}
       `;
@@ -172,7 +191,10 @@ export class SophosPlasticTable extends LitElement {
       const row = cell.getAttribute('row');
       const data = this.tableData[row][col];
       const detail = {
-        col, row, data
+        col,
+        row,
+        data,
+        cell,
       };
       this.dispatchEvent(new CustomEvent('cell-has-been-clicked', { detail }));
     };
@@ -184,5 +206,5 @@ export class SophosPlasticTable extends LitElement {
         </div>
       `;
     };
-}
+};
 customElements.define('sophos-plastic-table', SophosPlasticTable);
