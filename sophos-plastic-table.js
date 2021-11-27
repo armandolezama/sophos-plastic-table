@@ -111,7 +111,7 @@ export class SophosPlasticTable extends LitElement {
       return this._checkStructure(this.columnNames, () => html`
         <tr id="column-names">
           ${this.columnNames.map(columnName => html`
-              <th class="column-name">
+              <th scope="row" class="column-name">
                 ${columnName}
               </th>
           `)}
