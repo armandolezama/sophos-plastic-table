@@ -10,28 +10,12 @@ export class SophosPlasticTable extends LitElement {
     */
      constructor() {
       super();
-      this.mainHeader = 'Hello from main header';
-      this.caption = 'hello from caption';
-      this.tableData = [
-        [1, 2, 3],
-        [4, 5, 6],
-        [7, 8, 9]
-      ];
-      this.colGroups = [
-        {
-          span: '1',
-          class: 'selected-column'
-        },
-        {
-          span: '2',
-          class: 'non-selected-column',
-          style: {
-            backgroundColor: 'gray'
-          }
-        }
-      ];
-      this.columnNames = ['', 'impares', 'pares', 'impares'];
-      this.rowNames = ['primera', 'segunda', 'tercera'];
+      this.mainHeader = '';
+      this.caption = '';
+      this.tableData = [];
+      this.colGroups = [];
+      this.columnNames = [];
+      this.rowNames = [];
       this.builderObject = {};
     };
   
