@@ -16,7 +16,11 @@ export class SophosPlasticTable extends LitElement {
       this.colGroups = [];
       this.columnNames = [];
       this.rowNames = [];
-      this.builderObject = {};
+      this.builderObject = {
+        cellBuilder : undefined,
+        rowNameBuilder : undefined,
+        columnNameBuilder : undefined
+      };
     };
   
     /**
@@ -94,13 +98,21 @@ export class SophosPlasticTable extends LitElement {
     createColumnNames(){
       return this._checkStructure(this.columnNames, () => html`
         <tr id="column-names">
-          ${this.columnNames.map(columnName => html`
-              <th scope="row" class="column-name">
-                ${columnName}
-              </th>
-          `)}
+          ${this.columnNames.map(columnName => this.createColumnName(columnName))}
         </tr>
       `);
+    };
+
+    createColumnName(columnName){
+      return html`
+      <th scope="row" class="column-name">
+        ${this._columNameBuilder(columnName)}
+      </th>
+  `
+    };
+
+    _columNameBuilder(columnName){
+      return this._builderObject?.columnNameBuilder ? this._builderObject.columnNameBuilder(columnName) : columnName;
     };
 
     createBody(){
@@ -122,11 +134,7 @@ export class SophosPlasticTable extends LitElement {
     };
 
     createRow(row, rowIndex){
-      let rowTemplate = this._checkStructure(this.rowNames, () => html`
-        <th scope="col" class="row-name">
-          ${this.rowNames[rowIndex]}
-        </th>
-      `);
+      let rowTemplate = this._checkStructure(this.rowNames, this.createRowName(this.rowNames[rowIndex]));
       for (let colIndex = 0; colIndex < row.length; colIndex++) {
         rowTemplate = html`
           ${rowTemplate}
@@ -137,6 +145,14 @@ export class SophosPlasticTable extends LitElement {
           ${rowTemplate}
         </tr>
       `;
+    };
+
+    createRowName(rowName){
+      return () => html`
+        <th scope="col" class="row-name">
+          ${this._buildRowNameCell(rowName)}
+        </th>
+      `
     };
 
     createCell(cell, row, col){
@@ -151,8 +167,12 @@ export class SophosPlasticTable extends LitElement {
       `;
     };
 
+    _buildRowNameCell(rowName){
+      return this._builderObject?.rowNameBuilder ? this._builderObject.rowNameBuilder(rowName) : rowName;
+    };
+
     _buildCell(cell){
-      return this._builderObject?.builder ? this._builderObject.builder(cell) : cell;
+      return this._builderObject?.cellBuilder ? this._builderObject.cellBuilder(cell) : cell;
     };
 
     createFooter(){
