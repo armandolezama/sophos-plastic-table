@@ -1,5 +1,5 @@
 import { LitElement, html } from 'lit-element';
-import { styleMap } from 'lit/directives/style-map.js';
+import { styleMap } from 'lit-html/directives/style-map.js';
 import styles from './sophos-plastic-table-styles';
 
 export class SophosPlasticTable extends LitElement {
