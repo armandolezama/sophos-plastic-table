@@ -1,0 +1,5 @@
+coverage/
+node_modules/
+.eslintrc.js
+karma.conf.js
+sophos-plastic-table.spec.js

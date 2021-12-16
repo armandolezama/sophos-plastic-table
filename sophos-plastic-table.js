@@ -1,5 +1,5 @@
-import { LitElement, html } from 'lit-element';
-import { styleMap } from 'lit-html/directives/style-map.js';
+import { LitElement, html } from 'lit';
+import { styleMap } from 'lit/directives/style-map.js';
 import styles from './sophos-plastic-table-styles';
 
 export class SophosPlasticTable extends LitElement {
@@ -8,7 +8,7 @@ export class SophosPlasticTable extends LitElement {
     * state, set up event listeners, create shadow dom.
     * @constructor
     */
-     constructor() {
+     constructor () {
       super();
       this.mainHeader = '';
       this.caption = '';
@@ -21,12 +21,12 @@ export class SophosPlasticTable extends LitElement {
         rowNameBuilder : undefined,
         columnNameBuilder : undefined
       };
-    };
+    }
   
     /**
       * Declared properties and their corresponding attributes
       */
-    static get properties() {
+    static get properties () {
       return {
         mainHeader : { type : String},
         caption : { type : String},
@@ -36,19 +36,19 @@ export class SophosPlasticTable extends LitElement {
         rowNames : { type : Array },
         builderObject : { type : Object}
       };
-    };
+    }
 
-    static get styles() {
+    static get styles () {
       return styles;
-    };
+    }
 
-    set builderObject(value){
+    set builderObject (value){
       const oldValue = this._builderObject;
       this._builderObject = value;
       this.requestUpdate('builderObject', oldValue);
-    };
+    }
 
-    createTable(){
+    createTable (){
       return html`
         <table id="plastic-table">
           ${this.createHeader()}
@@ -59,70 +59,78 @@ export class SophosPlasticTable extends LitElement {
           ${this.createFooter()}
         </table>
       `;
-    };
+    }
 
-    createHeader(){
+    createHeader (){
       return html`
         <thead id="table-main-header">
           ${this.mainHeader}
         </thead>
       `;
-    };
+    }
 
-    createCaption(){
+    createCaption (){
       return html`
         <caption id="table-main-caption" >
           ${this.caption}
         </caption>
       `;
-    };
+    }
 
-    createColGroup(){
+    createColGroup (){
       return this._checkStructure(this.colGroups, () => html`
         <colgroup>
-          ${this.colGroups.map(col => this.createColTag(col))}
+          ${this.convertColGroupData()}
         </colgroup>
       `);
-    };
+    }
 
-    createColTag(col){
+    convertColGroupData (){
+      return this.colGroups.map(col => this.createColTag(col))
+    }
+
+    createColTag (col){
       return html`
-        <col span="${col.span}" class="${col.class}" style="${styleMap(this.getColTagStyles(col.style))}">
+        <col span=${col.span} class=${col.class} style=${styleMap(this.getColTagStyles(col.style))}>
       `;
-    };
+    }
 
-    getColTagStyles(style){
+    getColTagStyles (style){
       return typeof style === 'object' ? style : {};
-    };
+    }
 
-    createColumnNames(){
+    createColumnNames (){
       return this._checkStructure(this.columnNames, () => html`
         <tr id="column-names">
-          ${this.columnNames.map(columnName => this.createColumnName(columnName))}
+          ${this.convertColumnNames()}
         </tr>
       `);
-    };
+    }
 
-    createColumnName(columnName){
+    convertColumnNames (){
+      return this.columnNames.map(columnName => this.createColumnName(columnName))
+    }
+
+    createColumnName (columnName){
       return html`
       <th scope="row" class="column-name">
         ${this._columNameBuilder(columnName)}
       </th>
   `
-    };
+    }
 
-    _columNameBuilder(columnName){
+    _columNameBuilder (columnName){
       return this._builderObject?.columnNameBuilder ? this._builderObject.columnNameBuilder(columnName) : columnName;
-    };
+    }
 
-    createBody(){
+    createBody (){
       let grid = html``;
       for (let rowNumber = 0; rowNumber < this.tableData.length; rowNumber++) {
         grid = html`
           ${grid}
           ${this.createRow(this.tableData[rowNumber], rowNumber)}
         `;
-      };
+      }
 
       grid = html`
         <tbody id="table-body">
@@ -131,9 +139,9 @@ export class SophosPlasticTable extends LitElement {
       `;
 
       return grid;
-    };
+    }
 
-    createRow(row, rowIndex){
+    createRow (row, rowIndex){
       let rowTemplate = this._checkStructure(this.rowNames, this.createRowName(this.rowNames[rowIndex]));
       for (let colIndex = 0; colIndex < row.length; colIndex++) {
         rowTemplate = html`
@@ -145,37 +153,37 @@ export class SophosPlasticTable extends LitElement {
           ${rowTemplate}
         </tr>
       `;
-    };
+    }
 
-    createRowName(rowName){
+    createRowName (rowName){
       return () => html`
         <th scope="col" class="row-name">
           ${this._buildRowNameCell(rowName)}
         </th>
       `
-    };
+    }
 
-    createCell(cell, row, col){
+    createCell (cell, row, col){
       return html`
         <td 
         class="table-cell" 
-        row="${row}" 
-        column="${col}"
-        @click="${this._cellHasBeenClicked}">
+        row=${row} 
+        column=${col}
+        @click=${this._cellHasBeenClicked}>
           ${this._buildCell(cell)}
         </td>
       `;
-    };
+    }
 
-    _buildRowNameCell(rowName){
+    _buildRowNameCell (rowName){
       return this._builderObject?.rowNameBuilder ? this._builderObject.rowNameBuilder(rowName) : rowName;
-    };
+    }
 
-    _buildCell(cell){
+    _buildCell (cell){
       return this._builderObject?.cellBuilder ? this._builderObject.cellBuilder(cell) : cell;
-    };
+    }
 
-    createFooter(){
+    createFooter (){
       return html`
         <tfoot id="table-footer">
           <slot name="table-footer"></slot>
@@ -183,13 +191,13 @@ export class SophosPlasticTable extends LitElement {
       `;
     }
 
-    _checkStructure(structure, callback){
+    _checkStructure (structure, callback){
       return structure.length === 0 ? html`` : html`
         ${callback()}
       `;
-    };
+    }
 
-    _cellHasBeenClicked(e){
+    _cellHasBeenClicked (e){
       const cell = e.currentTarget;
       const col = cell.getAttribute('column');
       const row = cell.getAttribute('row');
@@ -201,14 +209,19 @@ export class SophosPlasticTable extends LitElement {
         cell,
       };
       this.dispatchEvent(new CustomEvent('cell-has-been-clicked', { detail }));
-    };
+    }
   
-    render() {
+    render () {
       return html`
         <div id="main-container">
           ${this.createTable()}
         </div>
       `;
-    };
-};
+    }
+}
 customElements.define('sophos-plastic-table', SophosPlasticTable);
+
+/**
+ * TO-DO: add default column and row names
+ * TO-DO: add font properties for css row-names and column-names and cells
+ */
